@@ -1,12 +1,13 @@
 from django.db import models
 
+from notebooks.enums import PREVIEW_SIZE
 from utility.models import BaseModel
 
 
-class NoteBook(BaseModel):
+class Notebook(BaseModel):
 
     file = models.OneToOneField(
-        to='NoteBookFile',
+        to='NotebookFile',
         on_delete=models.PROTECT,
         related_name='notebook',
         verbose_name='فایل جزوه'
@@ -15,6 +16,16 @@ class NoteBook(BaseModel):
     text = models.TextField(
         verbose_name='متن جزوه'
     )
+
+    @property
+    def name(self):
+        return self.file.name
+
+    @property
+    def preview_text(self):
+        if len(self.text) <= PREVIEW_SIZE:
+            return self.text
+        return '{}...'.format(self.text[:PREVIEW_SIZE])
 
     class Meta:
         verbose_name = 'جزوه'

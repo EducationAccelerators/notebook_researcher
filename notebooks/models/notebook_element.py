@@ -1,11 +1,11 @@
 from django.db import models
 
-from notebooks.models import NoteBook
+from notebooks.models import Notebook
 
 
 class NotebookElementMixin(models.Model):
     notebook = models.ForeignKey(
-        to=NoteBook,
+        to=Notebook,
         on_delete=models.CASCADE,
         related_name='%(class)ss',
         verbose_name='جزوه مربوطه'

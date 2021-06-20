@@ -17,7 +17,7 @@ def validate_txt_file_extension(value):
         raise ValidationError(message)
 
 
-class NoteBookFile(BaseHistoryModel):
+class NotebookFile(BaseHistoryModel):
     file = models.FileField(
         upload_to='notebooks/',
         verbose_name='فایل جزوه',
