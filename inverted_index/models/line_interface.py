@@ -18,6 +18,11 @@ class LineInterface(BaseModel):
         verbose_name='کلید مربوطه'
     )
 
+    repeat = models.PositiveIntegerField(
+        verbose_name='تعداد تکرار',
+        default=1
+    )
+
     class Meta:
         verbose_name = 'میانی خطی'
         verbose_name_plural = 'میانی های خطی'
