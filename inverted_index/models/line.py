@@ -1,9 +1,10 @@
 from django.db import models
 
+from notebooks.models import NotebookElementMixin
 from utility.models import BaseModel
 
 
-class Line(BaseModel):
+class Line(NotebookElementMixin, BaseModel):
     text = models.TextField(
         verbose_name='متن',
     )

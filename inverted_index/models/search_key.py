@@ -2,10 +2,11 @@ import re
 
 from django.db import models
 
+from notebooks.models import NotebookElementMixin
 from utility.models import BaseModel
 
 
-class SearchKey(BaseModel):
+class SearchKey(NotebookElementMixin, BaseModel):
     word = models.CharField(
         verbose_name='کلمه کلیدی',
         max_length=1024
