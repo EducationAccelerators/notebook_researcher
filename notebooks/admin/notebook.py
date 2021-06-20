@@ -7,7 +7,7 @@ from utility.admin import JalaliCreatedUpdatedMixin
 
 @admin.register(Notebook)
 class NotebookAdmin(JalaliCreatedUpdatedMixin, ModelAdmin):
-    list_display = ['id', 'get_name', 'get_jalali_created', 'get_preview_text']
+    list_display = ['get_name', 'get_jalali_created', 'get_preview_text']
 
     def get_readonly_fields(self, request, obj=None):
         return self.fields

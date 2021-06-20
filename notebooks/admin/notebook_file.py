@@ -11,7 +11,7 @@ class NotebookFileAdmin(JalaliCreatedUpdatedMixin, ModelAdmin):
 
     list_display_links = ['name']
 
-    fields = ['id', 'name', 'get_jalali_created', 'file']
+    fields = ['name', 'get_jalali_created', 'file']
     readonly_fields = ['get_jalali_created']
 
     def has_change_permission(self, request, obj=None):
