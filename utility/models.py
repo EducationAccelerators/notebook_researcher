@@ -10,9 +10,8 @@ class ActiveManager(models.Manager):
         return super().get_queryset().filter(is_deleted=False)
 
 
-class BaseModel(models.Model):
+class BaseModelNoRecovery(models.Model):
     objects = models.Manager()
-    active_objects = ActiveManager()
 
     created = models.DateTimeField(
         auto_now_add=True,
@@ -22,16 +21,6 @@ class BaseModel(models.Model):
     updated = models.DateTimeField(
         auto_now=True,
         verbose_name='تاریخ آخرین ویرایش'
-    )
-
-    is_deleted = models.BooleanField(
-        default=False,
-        verbose_name='آیا حذف شده است؟'
-    )
-
-    is_archived = models.BooleanField(
-        default=False,
-        verbose_name='آیا آرشیو شده است؟',
     )
 
     @property
@@ -45,6 +34,27 @@ class BaseModel(models.Model):
     @property
     def is_update(self):
         return not self.is_create
+
+    @property
+    def old_instance(self):
+        return self.__class__.objects.filter(pk=self.pk).first()
+
+    class Meta:
+        abstract = True
+
+
+class BaseModel(BaseModelNoRecovery):
+    active_objects = ActiveManager()
+
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name='آیا حذف شده است؟'
+    )
+
+    is_archived = models.BooleanField(
+        default=False,
+        verbose_name='آیا آرشیو شده است؟',
+    )
 
     @property
     def old_instance(self):
