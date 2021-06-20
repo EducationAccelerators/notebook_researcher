@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+#  quran_django:
+#    build: .
+#    ports:
+#    - "8000:8000"
+#    volumes:
+#    - .:/app
+#    command: python manage.py runserver 0.0.0.0:8000
+#    depends_on:
+#      - postgres
+#    environment:
+#      - MODE=development
+  postgres:
+    container_name: quran_django_gres
+    restart: always
+    image: postgres
+    ports:
+    - "5436:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+    - /home/postgres/quran_django_gres:/var/lib/postgresql/data
+

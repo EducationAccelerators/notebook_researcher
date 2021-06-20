@@ -1,0 +1,32 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+# python
+__pycache__
+
+# database
+db.sqlite3
+
+# ides / editors
+.idea
+.vscode
+
+# media
+media
+
+# test coverage
+.coverage
+
+# cache files
+cache
+cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+venv3/
+ENV/
+env.bak/
+venv.bak/
+venv3/
