@@ -10,9 +10,9 @@ from utility.text_formatting import make_colorful_parts, get_text_html_div, make
 
 
 class IndexAdmin(ModelAdmin):
-    list_display = ['id', 'index', 'notebook', 'get_text']
+    list_display = ['index', 'notebook', 'get_text']
     fields = ['id', 'index', 'get_text', 'notebook']
-    list_display_links = ['id', 'index']
+    list_display_links = ['index']
     readonly_fields = fields
     index_type = None
     search_fields = ['id']
