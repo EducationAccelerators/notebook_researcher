@@ -5,7 +5,7 @@ from utility.models import BaseModel
 
 
 class Notebook(BaseModel):
-    file = models.OneToOneField(
+    notebook_file = models.OneToOneField(
         to='NotebookFile',
         on_delete=models.PROTECT,
         related_name='notebook',
@@ -16,9 +16,14 @@ class Notebook(BaseModel):
         verbose_name='متن جزوه'
     )
 
+    model_created = models.BooleanField(
+        default=False,
+        verbose_name='مدلش ساخته شده است؟'
+    )
+
     @property
     def name(self):
-        return self.file.name
+        return self.notebook_file.name
 
     @property
     def preview_text(self):

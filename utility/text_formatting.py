@@ -1,4 +1,3 @@
-import random
 import re
 
 from jalali_date import datetime2jalali
@@ -37,6 +36,19 @@ class PersianEditor:
     @classmethod
     def clean_all_long_words(cls, text):
         return re.sub(r"""ـ+""", "", text)
+
+    def __init__(self):
+        self._formatters = [
+            self.fix_misc_non_persian_chars,
+            self.remove_incorrect_endlines,
+            self.remove_footnotes,
+            self.clean_all_long_words,
+        ]
+
+    def format_all(self, text):
+        for formatter in self._formatters:
+            text = formatter(text)
+        return text
 
 
 def clean_meaningless_parts_from_word(word):

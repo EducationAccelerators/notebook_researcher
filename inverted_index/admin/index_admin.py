@@ -1,9 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-from inverted_index.models import Paragraph, SearchKey, Line, IndexInterface
-
-admin.site.register(SearchKey)
+from inverted_index.models import Paragraph, Line
 
 
 class IndexAdmin(ModelAdmin):

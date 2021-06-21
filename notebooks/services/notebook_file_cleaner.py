@@ -1,19 +1,15 @@
 # notebookFile -> noteBook
-
-def omit_fake_spaces(text: str):
-    text = text.replace('.\n', '@')
-    text = text.replace('\n', '')
-    return text.replace('@', '.\n')
+from notebooks.models import NotebookFile, Notebook
+from utility.text_formatting import PersianEditor
 
 
-def fix_encode_characters(text):
-    # todo ask for ashkan's help for changing [ی و ک و ...]
-    return text
-
-
-def notebook_file_cleaner(notebook_file):
-    text = notebook_file.file.read()
-    text = omit_fake_spaces(text)
-    text = fix_encode_characters(text)
-    # todo Create A NoteBook Based On Text And File
-    pass
+def create_cleaned_notebook_from_notebook_file(notebook_file: NotebookFile):
+    text = notebook_file.file.file.read().decode('utf-8', errors='ignore')
+    editor = PersianEditor()
+    text = editor.format_all(text)
+    return Notebook.active_objects.get_or_create(
+        notebook_file=notebook_file,
+        defaults={
+            'text': text
+        }
+    )
