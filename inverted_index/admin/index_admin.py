@@ -5,7 +5,7 @@ from django.utils.html import format_html
 
 from inverted_index.enums import INDEX_TYPE_PARAGRAPH, INDEX_TYPE_LINE, COLOR_RED
 from inverted_index.models import Paragraph, Line
-from inverted_index.services.search_keywords import search_words, sort_based_on_repeat_average
+from inverted_index.services.search_keywords import search_words_exact, sort_based_on_repeat_average
 from utility.text_formatting import make_colorful_parts, get_text_html_div, make_bold_parts, make_colorful_bold_parts
 
 
@@ -27,7 +27,7 @@ class IndexAdmin(ModelAdmin):
         if not search_term:
             return super(IndexAdmin, self).get_search_results(request, queryset, search_term)
         keywords = search_term.split(' ')
-        key_ids, index_ids = search_words(index_type=self.index_type, keywords=keywords)
+        key_ids, index_ids = search_words_exact(index_type=self.index_type, keywords=keywords)
         queryset = queryset.filter(id__in=index_ids)
         indices_with_average_repeats = sort_based_on_repeat_average(key_ids, index_ids)
         whens = []
