@@ -6,7 +6,7 @@ from django.utils.html import format_html
 from inverted_index.enums import INDEX_TYPE_PARAGRAPH, INDEX_TYPE_LINE, COLOR_RED
 from inverted_index.models import Paragraph, Line
 from inverted_index.services.search_keywords import search_words, sort_based_on_repeat_average
-from utility.text_formatting import make_colorful_parts, get_text_html_div
+from utility.text_formatting import make_colorful_parts, get_text_html_div, make_bold_parts, make_colorful_bold_parts
 
 
 class IndexAdmin(ModelAdmin):
@@ -60,7 +60,7 @@ class IndexAdmin(ModelAdmin):
             query_params = request.GET.get('q', '')
             if query_params:
                 keywords = query_params.split(' ')
-        text = make_colorful_parts(obj.text, keywords, color=COLOR_RED)
+        text = make_colorful_bold_parts(obj.text, keywords, color=COLOR_RED)
 
         return format_html(
             get_text_html_div(text=text)

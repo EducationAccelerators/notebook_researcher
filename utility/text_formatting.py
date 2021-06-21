@@ -71,7 +71,7 @@ def make_bold_html(text):
 
 def make_bold_parts(text, parts):
     for part in parts:
-        text = text.replace(part, make_bold_html(part))
+        text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_bold_html(part), string=text)
     return text
 
 
@@ -84,7 +84,14 @@ def make_colorful_html(text, color):
 
 def make_colorful_parts(text, parts, color):
     for part in parts:
-        text = text.replace(part, make_colorful_html(part, color))
+        text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_colorful_html(part, color), string=text)
+    return text
+
+
+def make_colorful_bold_parts(text, parts, color):
+    for part in parts:
+        text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_bold_html(make_colorful_html(part, color)),
+                      string=text)
     return text
 
 
