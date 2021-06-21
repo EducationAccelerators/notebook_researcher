@@ -1,10 +1,12 @@
 from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin
 from django.utils import timezone
+from django.utils.html import format_html
 
 from notebooks.models import Notebook
 from notebooks.services.inverted_indexer import inverted_indexer
 from utility.admin import JalaliCreatedUpdatedMixin
+from utility.text_formatting import get_text_html_div
 
 
 def created_inverted_index_model(modeladmin, request, queryset):
@@ -43,7 +45,7 @@ created_inverted_index_model.short_description = 'ساختن مدل سرچ'
 @admin.register(Notebook)
 class NotebookAdmin(JalaliCreatedUpdatedMixin, ModelAdmin):
     list_display = ['id', 'get_name', 'get_jalali_created', 'get_list_preview_text']
-    fields = ['get_name', 'get_jalali_created', 'get_preview_text', 'text']
+    fields = ['get_name', 'get_jalali_created', 'get_text']
     LIST_PREVIEW_SIZE = 128
 
     actions = [created_inverted_index_model, ]
@@ -51,17 +53,29 @@ class NotebookAdmin(JalaliCreatedUpdatedMixin, ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         return self.fields
 
+    @staticmethod
+    def get_text_div(text):
+        return format_html(
+            get_text_html_div(text=text)
+        )
+
     def get_preview_text(self, obj):
-        return obj.preview_text
+        return self.get_text_div(obj.preview_text)
 
     get_preview_text.short_description = 'پیش‌نمایش'
 
     def get_list_preview_text(self, obj):
-        if len(obj.preview_text) <= self.LIST_PREVIEW_SIZE:
-            return obj.preview_text
-        return '{}...'.format(obj.text[:self.LIST_PREVIEW_SIZE])
+        text = obj.text
+        if len(obj.text) > self.LIST_PREVIEW_SIZE:
+            text = '{}...'.format(text[:self.LIST_PREVIEW_SIZE])
+        return self.get_text_div(text)
 
     get_list_preview_text.short_description = 'پیش‌نمایش'
+
+    def get_text(self, obj):
+        return self.get_text_div(obj.text)
+
+    get_text.short_description = 'متن جزوه'
 
     def get_name(self, obj):
         return obj.name
