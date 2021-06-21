@@ -10,8 +10,8 @@ def jalali_strftime(input_datetime, output_format='%H:%M %Y/%m/%d'):
 
 class PersianEditor:
     misc_non_persian_chars = {
-        'bad_chars': ",;كي",
-        'good_chars': "،؛کی"
+        'bad_chars': ",;كيى",
+        'good_chars': "،؛کیی"
     }
 
     @classmethod
