@@ -34,4 +34,4 @@ class Set(set):
         return self.intersection(other)
 
     def __or__(self, other):
-        return set(*self, *other)
+        return Set([*self, *other])
