@@ -1,4 +1,6 @@
 # notebook -> inverted_index_model
+from tqdm import tqdm
+
 from inverted_index.models import Index, IndexInterface, SearchKey
 from notebooks.enums import PARAGRAPH_SEPARATOR, LINE_SEPARATOR, WORD_SEPARATOR, SEPARATOR_TO_INDEX
 from utility.text_formatting import clean_meaningless_parts_from_word
@@ -49,13 +51,17 @@ def dictor(text, separator, notebook):
     lines = text.split(separator)
     index_type = dict(SEPARATOR_TO_INDEX)[separator]
 
+    print('Creating inverted index model for {}s'.format(index_type.lower()))
+
     index_number2index_id = {}
-    for index, line in enumerate(lines):
+    for index in tqdm(range(len(lines)), desc='CREAT INDEX'):
+        line = lines[index]
         index_obj = create_index(line, index, notebook=notebook, index_type=index_type)
         index_number2index_id[index] = index_obj.id
 
     keyword2search_key_id = {}
-    for index, line in enumerate(lines):
+    for index in tqdm(range(len(lines)), desc='CREAT HASHMAP'):
+        line = lines[index]
         for word in line.split(WORD_SEPARATOR):
             cleaned_word = clean_meaningless_parts_from_word(word)
             if cleaned_word not in keyword2search_key_id:
@@ -63,7 +69,7 @@ def dictor(text, separator, notebook):
                 keyword2search_key_id[cleaned_word] = search_key.id
             add_index(keyword2indices, cleaned_word, index)
 
-    for keyword, indices in keyword2indices.items():
+    for keyword, indices in tqdm(keyword2indices.items(), desc='MIGRATE TO DB'):
         for index_number, repeat in indices.items():
             create_index_interface(
                 key_id=keyword2search_key_id[keyword],

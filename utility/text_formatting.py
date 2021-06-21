@@ -1,6 +1,7 @@
 import re
 
 from jalali_date import datetime2jalali
+from tqdm import tqdm
 
 
 def jalali_strftime(input_datetime, output_format='%H:%M %Y/%m/%d'):
@@ -55,8 +56,8 @@ class PersianEditor:
         ]
 
     def format_all(self, text):
-        for formatter in self._formatters:
-            text = formatter(text)
+        for i in tqdm(range(len(self._formatters)), desc='farsi formatting'):
+            text = self._formatters[i](text)
         return text
 
 
