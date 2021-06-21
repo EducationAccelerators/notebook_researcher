@@ -7,3 +7,5 @@ INDEX_TYPES = (
     (INDEX_TYPE_LINE, 'خط'),
     (INDEX_TYPE_PARAGRAPH, 'پاراگراف')
 )
+
+PREVIEW_SIZE = 32

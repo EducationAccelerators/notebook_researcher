@@ -30,6 +30,9 @@ class SearchKey(NotebookElementMixin, BaseModel):
             interfaces__key_id=self.id
         )
 
+    def __str__(self):
+        return self.word
+
     class Meta:
         verbose_name = 'کلید جستجو'
         verbose_name_plural = 'کلید های جستجو'

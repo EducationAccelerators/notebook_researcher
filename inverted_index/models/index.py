@@ -1,6 +1,6 @@
 from django.db import models
 
-from inverted_index.enums import INDEX_TYPES, INDEX_TYPE_PARAGRAPH, INDEX_TYPE_LINE
+from inverted_index.enums import INDEX_TYPES, INDEX_TYPE_PARAGRAPH, INDEX_TYPE_LINE, PREVIEW_SIZE
 from notebooks.models import NotebookElementMixin
 from utility.models import BaseModel
 from utility.python import classproperty
@@ -52,6 +52,15 @@ class Index(NotebookElementMixin, BaseModel):
             INDEX_TYPE_PARAGRAPH: Paragraph,
             INDEX_TYPE_LINE: Line
         }
+
+    @property
+    def preview(self):
+        if len(self.text) < PREVIEW_SIZE:
+            return self.text
+        return self.text[:PREVIEW_SIZE]
+
+    def __str__(self):
+        return self.preview
 
     class Meta:
         verbose_name = 'اندیس'

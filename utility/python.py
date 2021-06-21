@@ -26,3 +26,12 @@ def classproperty(func):
         func = classmethod(func)
 
     return ClassPropertyDescriptor(func)
+
+
+class Set(set):
+
+    def __and__(self, other):
+        return self.intersection(other)
+
+    def __or__(self, other):
+        return set(*self, *other)
