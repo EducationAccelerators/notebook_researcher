@@ -1,32 +1,50 @@
 # notebook -> inverted_index_model
-line_separator = '.'
-paragraph_separator = '\n'
-word_separator = ' '
+from inverted_index.models import Index, IndexInterface, SearchKey
+from notebooks.enums import PARAGRAPH_SEPARATOR, LINE_SEPARATOR, WORD_SEPARATOR, SEPARATOR_TO_INDEX
 
 
-def add_index(dict_obj: dict, word, index):
-    if word in dict_obj:
-        if index in dict_obj[word]:
-            dict_obj[word][index] += 1
-        else:
-            dict_obj[word][index] = 1
-    else:
-        dict_obj[word] = [index]
+def add_index_to_key(key, index):
+    interface, created = IndexInterface.active_objects.get_or_create(
+        key=key,
+        index=index
+    )
+    if not created:
+        interface.repeat += 1
+        interface.save(update_fields=['repeat', ])
+    return interface
 
 
-def dictor(text, separator):
-    dictor_obj = {}
-    lines = text.split(line_separator)
+def create_index(text, index, index_type, notebook):
+    index_class = Index.index_type2index_class_dict[index_type]
+    index, _ = index_class.active_objects.get_or_create(
+        index=index,
+        notebook=notebook,
+        defaults={
+            'text': text,
+        }
+    )
+    return index
+
+
+def create_search_key(keyword, notebook):
+    key, _ = SearchKey.active_objects.get_or_create(
+        word=keyword,
+        notebook=notebook
+    )
+    return key
+
+
+def dictor(text, separator, notebook):
+    lines = text.split(separator)
+    index_type = dict(SEPARATOR_TO_INDEX)[separator]
     for index, line in enumerate(lines):
-        for word in line.split(word_separator):
-            add_index(dictor_obj, word, index)
-    return dictor_obj, lines
+        index = create_index(line, index, notebook=notebook, index_type=index_type)
+        for word in line.split(WORD_SEPARATOR):
+            search_key = create_search_key(word, notebook=notebook)
+            add_index_to_key(search_key, index)
 
 
 def inverted_indexer(notebook):
-    text = notebook.text
-    paragraph_hash, paragraphs = dictor(text=notebook.text, separator=paragraph_separator)
-    line_hash, lines = dictor(text=notebook.text, separator=line_separator)
-    # lines & Paragraphs hashes and weights are ready. Need To Create Objects (line_hash[word][index] = weight)
-    # todo Create Search_keys, lines+interfaces, paragraphs+interfaces
+    dictor(text=notebook.text, separator=PARAGRAPH_SEPARATOR, notebook=notebook)
+    dictor(text=notebook.text, separator=LINE_SEPARATOR, notebook=notebook)
 
