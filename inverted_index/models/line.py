@@ -1,13 +1,13 @@
-from django.db import models
-
-from notebooks.models import NotebookElementMixin
-from utility.models import BaseModel
+from inverted_index.enums import INDEX_TYPE_LINE
+from inverted_index.models import Index
 
 
-class Line(NotebookElementMixin, BaseModel):
-    text = models.TextField(
-        verbose_name='متن',
-    )
+class Line(Index):
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.index_type = INDEX_TYPE_LINE
+        super(Line, self).save(force_insert, force_update, using, update_fields)
 
     class Meta:
         verbose_name = 'خط'

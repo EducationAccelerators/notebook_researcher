@@ -5,7 +5,6 @@ from utility.models import BaseModel
 
 
 class Notebook(BaseModel):
-
     file = models.OneToOneField(
         to='NotebookFile',
         on_delete=models.PROTECT,
@@ -26,6 +25,9 @@ class Notebook(BaseModel):
         if len(self.text) <= PREVIEW_SIZE:
             return self.text
         return '{}...'.format(self.text[:PREVIEW_SIZE])
+
+    def __str__(self):
+        return '({}): {}'.format(self.id, self.name)
 
     class Meta:
         verbose_name = 'جزوه'

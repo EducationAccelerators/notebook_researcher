@@ -3,18 +3,18 @@ from django.db import models
 from utility.models import BaseModel
 
 
-class ParagraphInterface(BaseModel):
-    paragraph = models.ForeignKey(
-        to='Paragraph',
+class IndexInterface(BaseModel):
+    index = models.ForeignKey(
+        to='Index',
         on_delete=models.CASCADE,
         related_name='interfaces',
-        verbose_name='پاراگراف مربوطه'
+        verbose_name='اندیس مربوطه'
     )
 
     key = models.ForeignKey(
         to='SearchKey',
         on_delete=models.CASCADE,
-        related_name='key',
+        related_name='index_interfaces',
         verbose_name='کلید مربوطه'
     )
 
@@ -24,5 +24,5 @@ class ParagraphInterface(BaseModel):
     )
 
     class Meta:
-        verbose_name = 'میانی پاراگرافی'
-        verbose_name_plural = 'میانی های پاراگرافی'
+        verbose_name = 'میانی اندیس'
+        verbose_name_plural = 'میانی های اندیس'

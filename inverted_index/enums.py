@@ -1,0 +1,9 @@
+
+
+INDEX_TYPE_LINE = 'Line'
+INDEX_TYPE_PARAGRAPH = 'PARAGRAPH'
+
+INDEX_TYPES = (
+    (INDEX_TYPE_LINE, 'خط'),
+    (INDEX_TYPE_PARAGRAPH, 'پاراگراف')
+)

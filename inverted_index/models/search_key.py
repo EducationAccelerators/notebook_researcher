@@ -33,3 +33,4 @@ class SearchKey(NotebookElementMixin, BaseModel):
     class Meta:
         verbose_name = 'کلید جستجو'
         verbose_name_plural = 'کلید های جستجو'
+        unique_together = ('word', 'notebook',)
