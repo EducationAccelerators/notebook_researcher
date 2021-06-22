@@ -69,12 +69,6 @@ def make_bold_html(text):
     return '<b>' + text + '</b>'
 
 
-def make_bold_parts(text, parts):
-    for part in parts:
-        text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_bold_html(part), string=text)
-    return text
-
-
 def make_colorful_html(text, color):
     return '<span style="color: {};">{}</span>'.format(
         color,
@@ -82,16 +76,35 @@ def make_colorful_html(text, color):
     )
 
 
-def make_colorful_parts(text, parts, color):
+def make_bold_parts(text, parts, exact=True):
     for part in parts:
-        text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_colorful_html(part, color), string=text)
+        if exact:
+            text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_bold_html(part), string=text)
+        else:
+            text = text.replace(part, make_bold_html(part))
     return text
 
 
-def make_colorful_bold_parts(text, parts, color):
+def make_colorful_parts(text, parts, color, exact=True):
     for part in parts:
-        text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_bold_html(make_colorful_html(part, color)),
-                      string=text)
+        if exact:
+            text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_colorful_html(part, color), string=text)
+        else:
+            text = text.replace(part, make_colorful_html(part, color))
+    return text
+
+
+def make_colorful_bold_parts(text, parts, color, exact=True):
+    for part in parts:
+        if exact:
+            text = re.sub(
+                pattern=r'(?<=\s){}(?=\s)'.format(part),
+                repl=make_bold_html(make_colorful_html(part, color)),
+                string=text
+            )
+        else:
+            text = text.replace(part, make_bold_html(make_colorful_html(part, color)))
+
     return text
 
 
