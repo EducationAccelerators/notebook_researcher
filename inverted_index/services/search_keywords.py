@@ -1,3 +1,4 @@
+from collections import Iterable
 from functools import reduce
 from operator import and_, or_
 
@@ -6,8 +7,10 @@ from inverted_index.models import SearchKey, IndexInterface
 from utility.python import Set
 
 
-def search_words_exact(index_type, keywords):
+def search_words_exact(index_type, keywords, notebook_ids: Iterable = None):
     search_keys = SearchKey.active_objects.filter(word__in=keywords)
+    if notebook_ids:
+        search_keys = search_keys.filter(notebook_id__in=notebook_ids)
     if search_keys.count() != len(keywords):
         return search_keys.values_list('id', flat=True), set()
     property_name = 'paragraphs' if index_type == INDEX_TYPE_PARAGRAPH else 'lines'
@@ -17,12 +20,14 @@ def search_words_exact(index_type, keywords):
     return search_keys.values_list('id', flat=True), index_ids
 
 
-def search_words_contains(index_type, keywords):
+def search_words_contains(index_type, keywords, notebook_ids: Iterable = None):
     property_name = 'paragraphs' if index_type == INDEX_TYPE_PARAGRAPH else 'lines'
     new_indices_list = []
     keys_set = Set()
     for keyword in keywords:
         contained_keys = SearchKey.active_objects.filter(word__contains=keyword)
+        if notebook_ids:
+            contained_keys = contained_keys.filter(notebook_id__in=notebook_ids)
         keys_set = keys_set.union(Set(list(contained_keys.values_list('id', flat=True))))
         new_indices_list.append(reduce(or_, [
             Set(getattr(key, property_name).values_list('id', flat=True)) for key in contained_keys

@@ -46,13 +46,15 @@ class SearchTypeFilter(SimpleFilterWithDefaultValue):
         return queryset
 
 
-class NotebookFilter(SimpleListFilter):
+class NotebookFilter(SimpleFilterWithDefaultValue):
+
     title = 'جزوه'
     parameter_name = 'notebook_filter'
 
     maximum_notebooks_in_filter = 10
 
-    def lookups(self, request, model_admin):
+    @staticmethod
+    def get_lookups():
         notebooks = list(Notebook.active_objects.order_by('-created')[:min(Notebook.active_objects.count(), 10)])
         lookups = []
         for notebook in notebooks:
@@ -61,10 +63,18 @@ class NotebookFilter(SimpleListFilter):
             )
         return lookups
 
+    def lookups(self, request, model_admin):
+        return self.get_lookups()
+
+    def get_default_value(self):
+        return str(self.get_lookups()[0][0])
+
     def queryset(self, request, queryset):
+        value = self.get_default_value()
         if self.value():
-            notebook_id = int(self.value())
-            queryset = queryset.filter(notebook_id=notebook_id)
+            value = self.value()
+        notebook_id = int(value)
+        queryset = queryset.filter(notebook_id=notebook_id)
         return queryset
 
 
@@ -91,7 +101,11 @@ class IndexAdmin(ModelAdmin):
             return super(IndexAdmin, self).get_search_results(request, queryset, search_term)
         searcher = SearchTypeFilter.get_searcher_from_request(request)
         keywords = search_term.split(' ')
-        key_ids, index_ids = searcher(index_type=self.index_type, keywords=keywords)
+        key_ids, index_ids = searcher(
+            index_type=self.index_type,
+            keywords=keywords,
+            notebook_ids=set(queryset.values_list('notebook', flat=True))
+        )
         queryset = queryset.filter(id__in=index_ids)
         indices_with_average_repeats = sort_based_on_repeat_average(key_ids, index_ids)
         whens = []

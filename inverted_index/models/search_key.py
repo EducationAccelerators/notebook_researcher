@@ -20,14 +20,16 @@ class SearchKey(NotebookElementMixin, BaseModel):
     def lines(self):
         from inverted_index.models import Line
         return Line.active_objects.filter(
-            interfaces__key_id=self.id
+            interfaces__key_id=self.id,
+            notebook_id=self.notebook_id
         )
 
     @property
     def paragraphs(self):
         from inverted_index.models import Paragraph
         return Paragraph.active_objects.filter(
-            interfaces__key_id=self.id
+            interfaces__key_id=self.id,
+            notebook_id=self.notebook_id
         )
 
     def __str__(self):
