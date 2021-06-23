@@ -79,7 +79,7 @@ def make_colorful_html(text, color):
 def make_bold_parts(text, parts, exact=True):
     for part in parts:
         if exact:
-            text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_bold_html(part), string=text)
+            text = re.sub(pattern=r'(?<=\W){}(?=\W)'.format(part), repl=make_bold_html(part), string=text)
         else:
             text = text.replace(part, make_bold_html(part))
     return text
@@ -88,7 +88,7 @@ def make_bold_parts(text, parts, exact=True):
 def make_colorful_parts(text, parts, color, exact=True):
     for part in parts:
         if exact:
-            text = re.sub(pattern=r'(?<=\s){}(?=\s)'.format(part), repl=make_colorful_html(part, color), string=text)
+            text = re.sub(pattern=r'(?<=\W){}(?=\W)'.format(part), repl=make_colorful_html(part, color), string=text)
         else:
             text = text.replace(part, make_colorful_html(part, color))
     return text
@@ -98,7 +98,7 @@ def make_colorful_bold_parts(text, parts, color, exact=True):
     for part in parts:
         if exact:
             text = re.sub(
-                pattern=r'(?<=\s){}(?=\s)'.format(part),
+                pattern=r'(?<=\W){}(?=\W)'.format(part),
                 repl=make_bold_html(make_colorful_html(part, color)),
                 string=text
             )
