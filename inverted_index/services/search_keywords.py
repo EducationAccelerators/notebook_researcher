@@ -29,11 +29,13 @@ def search_words_contains(index_type, keywords, notebook_ids: Iterable = None):
         if notebook_ids:
             contained_keys = contained_keys.filter(notebook_id__in=notebook_ids)
         keys_set = keys_set.union(Set(list(contained_keys.values_list('id', flat=True))))
-        new_indices_list.append(reduce(or_, [
-            Set(getattr(key, property_name).values_list('id', flat=True)) for key in contained_keys
-        ]))
-
-    index_ids = reduce(and_, new_indices_list)
+        if contained_keys:
+            new_indices_list.append(reduce(or_, [
+                Set(getattr(key, property_name).values_list('id', flat=True)) for key in contained_keys
+            ]))
+    index_ids = []
+    if new_indices_list:
+        index_ids = reduce(and_, new_indices_list)
     return keys_set, index_ids
 
 
