@@ -19,6 +19,10 @@ class PersianEditor:
         return txt.translate({ord(k): v for k, v in zip(intab, outtab)})
 
     @classmethod
+    def remove_garbage_characters(cls, text: str):
+        return text.replace('\r', '')
+
+    @classmethod
     def fix_misc_non_persian_chars(cls, text):
         return cls.tr(
             cls.misc_non_persian_chars['bad_chars'],
@@ -48,6 +52,7 @@ class PersianEditor:
 
     def __init__(self):
         self._formatters = [
+            self.remove_garbage_characters,
             self.fix_misc_non_persian_chars,
             self.remove_incorrect_endlines,
             self.remove_footnotes,
