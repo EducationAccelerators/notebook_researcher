@@ -57,7 +57,7 @@ class PersianEditor:
             self.remove_incorrect_endlines,
             self.remove_footnotes,
             self.clean_all_long_words,
-            self.fix_parentheses
+            # self.fix_parentheses
         ]
 
     def format_all(self, text):

@@ -1,12 +1,10 @@
-from django.contrib import admin
-from django.contrib.admin import ModelAdmin, SimpleListFilter
-from django.db.models import Case, When, Value, FloatField
+from django.contrib import admin, messages
+from django.contrib.admin import ModelAdmin
 from django.utils.html import format_html
 
 from inverted_index.enums import INDEX_TYPE_PARAGRAPH, INDEX_TYPE_LINE, COLOR_RED
 from inverted_index.models import Paragraph, Line
-from inverted_index.services.search_keywords import search_words_exact, sort_based_on_repeat_average, \
-    search_words_contains
+from inverted_index.notebook_searcher import ExactKeySearcher, ContainsKeySearcher, IndexSearcher
 from notebooks.models import Notebook
 from utility.admin import SimpleFilterWithDefaultValue
 from utility.text_formatting import get_text_html_div, make_colorful_bold_parts
@@ -18,12 +16,14 @@ class SearchTypeFilter(SimpleFilterWithDefaultValue):
 
     lookups_field = [
         ('exact', 'خود کلمه'),
-        ('contains', 'تطابق کلمه')
+        ('contains', 'تطابق کلمه'),
+        ('index', 'شماره اندیس')
     ]
 
     lookup2searcher = {
-        lookups_field[0][0]: search_words_exact,
-        lookups_field[1][0]: search_words_contains,
+        lookups_field[0][0]: ExactKeySearcher,
+        lookups_field[1][0]: ContainsKeySearcher,
+        lookups_field[2][0]: IndexSearcher
     }
 
     default_value = lookups_field[0][0]
@@ -89,6 +89,7 @@ class IndexAdmin(ModelAdmin):
         SearchTypeFilter,
         NotebookFilter,
     ]
+    search_splitter = ' '
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -99,33 +100,16 @@ class IndexAdmin(ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         if not search_term:
             return super(IndexAdmin, self).get_search_results(request, queryset, search_term)
-        searcher = SearchTypeFilter.get_searcher_from_request(request)
-        keywords = search_term.split(' ')
-        key_ids, index_ids = searcher(
-            index_type=self.index_type,
-            keywords=keywords,
-            notebook_ids=set(queryset.values_list('notebook', flat=True))
-        )
-        queryset = queryset.filter(id__in=index_ids)
-        indices_with_average_repeats = sort_based_on_repeat_average(key_ids, index_ids)
-        whens = []
-        for index_id, avg_repeat in indices_with_average_repeats.items():
-            whens.append(
-                When(
-                    id=index_id,
-                    then=Value(avg_repeat, output_field=FloatField())
-                )
+        try:
+            searcher = SearchTypeFilter.get_searcher_from_request(request)(
+                index_type=self.index_type,
+                searched_items=search_term.split(self.search_splitter),
+                queryset=queryset,
             )
-        queryset = queryset.annotate(
-            average_repeat=Case(
-                *whens,
-                default=0,
-                output_field=FloatField()
-            )
-        ).order_by(
-            '-average_repeat'
-        )
-        return queryset, False
+            return searcher.get_queryset(), False
+        except ValueError as e:
+            messages.add_message(request, messages.ERROR, 'مقدار سرچ شده منطقی نیست.')
+            return queryset, False
 
     def changelist_view(self, request, *args, **kwargs):
         self.request = request

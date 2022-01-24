@@ -13,15 +13,15 @@ services:
 #    environment:
 #      - MODE=development
   postgres:
-    container_name: quran_django_gres
+    container_name: notebook_researcher_django_gres
     restart: always
     image: postgres
     ports:
-    - "5436:5432"
+    - "5444:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
     volumes:
-    - /home/postgres/quran_django_gres:/var/lib/postgresql/data
+    - /home/postgres/notebook_researcher:/var/lib/postgresql/data
 
