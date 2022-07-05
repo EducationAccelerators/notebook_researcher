@@ -1,23 +1,12 @@
 version: '3.7'
 
 services:
-#  quran_django:
-#    build: .
-#    ports:
-#    - "8000:8000"
-#    volumes:
-#    - .:/app
-#    command: python manage.py runserver 0.0.0.0:8000
-#    depends_on:
-#      - postgres
-#    environment:
-#      - MODE=development
   postgres:
     container_name: notebook_researcher_django_gres
     restart: always
     image: postgres
     ports:
-    - "5444:5432"
+    - "5480:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
